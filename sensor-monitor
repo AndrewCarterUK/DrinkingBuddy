@@ -1,0 +1,48 @@
+#!/usr/bin/env php
+<?php
+
+use PiPHP\GPIO\PinFactory;
+use Symfony\Component\Process\Process;
+
+require_once __DIR__ . '/vendor/autoload.php';
+
+$pin = (new PinFactory)->getPin(14);
+$pin->export();
+
+$process = new Process('python pulse-counter.py');
+$process->setTimeout(null);
+
+$process->run(function ($type, $buffer) {
+    $trimmedBuffer = trim($buffer);
+
+    foreach (explode(PHP_EOL, $trimmedBuffer) as $pulseCount) {
+	processPulseCount((int) $pulseCount);
+    }
+});
+
+
+function processPulseCount($pulses)
+{
+    $mlPerPulse = 0.225;
+    $stateFile  = __DIR__ . '/data/state.json';
+    $eventsFile = __DIR__ . '/data/events.json';
+
+    if ($pulses === 0) {
+        return;
+    }
+
+    $amount = $pulses * $mlPerPulse;
+    $now = time();
+
+    // Log state
+    $state = json_decode(file_get_contents($stateFile), true);
+    $state['draw'] += $amount;
+    file_put_contents($stateFile, json_encode($state));
+
+    // Log events
+    $events = json_decode(file_get_contents($eventsFile), true);
+    $events = array_filter($events, function ($event) use ($now) { return $event['time'] > $now - 60; });
+    $events[] = ['time' => $now, 'amount' => $amount];
+    file_put_contents($eventsFile, json_encode($events));
+}
+

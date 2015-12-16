@@ -1,0 +1,6 @@
+{
+    "require": {
+        "piphp/gpio": "^0.1.2",
+        "symfony/process": "^3.0"
+    }
+}

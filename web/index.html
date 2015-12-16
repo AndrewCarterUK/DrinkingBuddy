@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Drinking Buddy</title>
+
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <link href="bootstrap.min.css" rel="stylesheet" type="text/css" />
+        <link href="angular-chart.min.css" rel="stylesheet" type="text/css" />
+
+        <script src="angular.min.js" type="text/javascript"></script>
+        <script src="Chart.min.js" type="text/javascript"></script>
+        <script src="angular-chart.min.js" type="text/javascript"></script>
+
+        <script type="text/javascript">
+            angular
+                .module('DrinkingBuddy', ['chart.js'])
+                .factory('feed', ['$http', '$timeout', function ($http, $timeout) {
+                        var feed = {
+                            time: 0,
+                            events: [],
+                            supply: {},
+                            state:  { draw: 0 },
+                            points: [[]]
+                        };
+
+                        function processPoints() {
+                            for (var i = 0; i < 60; i++) {
+                                var time = feed.time - 60 + i;
+
+                                feed.points[0][i] = 0;
+
+                                for (var j = 0; j < feed.events.length; j++) {
+                                    if (feed.events[j].time === time) {
+                                        feed.points[0][i] = feed.events[j].amount;
+                                    }
+                                }
+                            }
+                            
+                            console.log(feed);
+                        }
+
+                        function load() {
+                            $http({
+                                url: 'feed.php'
+                            }).then(function (response) {
+                                feed.time   = response.data.time;
+                                feed.events = response.data.events;
+                                feed.supply = response.data.supply;
+                                feed.state  = response.data.state;
+
+                                processPoints();
+
+                                $timeout(load, 2000);
+                            }, function (response) {
+                                console.log(response);
+                                alert('There was an error accessing the feed');
+                            });
+                        }
+
+                        load();
+
+                        return feed;
+                    }])
+                .controller('controller', ['$scope', 'feed', function ($scope, feed) {
+                        $scope.feed = feed;
+                        $scope.axis = [];
+
+                        $scope.getLevel = function () {
+                            var capacity = feed.supply.capacity * 1000;
+                            var level = (capacity - feed.state.draw) / capacity;
+                            if (level < 0) level = 0;
+                            return level * 100;
+                        };
+
+                        for (var i = 0; i < 60; i++) {
+                            $scope.axis[i] = i;
+                        }
+
+                        $scope.levelMeta = function (level) {
+                            if (level > 50) {
+                                return { suffix: 'success', message: 'You have plenty of booze left, huzzah!' };
+                            } else if (level > 20) {
+                                return { suffix: 'warning', message: 'You still have booze. But you do not have much.' };
+                            }
+
+                            return { suffix: 'danger', message: 'Booze level critical. Entering emergency ration phase.' };
+                        };
+
+                        $scope.levelText = function (level) {
+                            return $scope.levelMeta(level).message;
+                        };
+
+                        $scope.alertClass = function (level) {
+                            return 'alert-' + $scope.levelMeta(level).suffix;
+                        }
+
+                        $scope.progressBarClass = function (level) {
+                            return 'progress-bar-' + $scope.levelMeta(level).suffix;
+                        };
+                    }]);
+        </script>
+    </head>
+    <body ng-app="DrinkingBuddy" ng-controller="controller">
+        <br />
+        <div class="container">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="alert" ng-class="alertClass(getLevel())">
+                        {{ levelText(getLevel()) }}
+                    </div>
+                </div>
+                <div class="col-xs-12 col-sm-6">
+                    <img class="img-responsive" ng-src="{{ feed.supply.image }}" ng-alt="{{ feed.supply.name }}" />
+                </div>
+                <div class="col-xs-12 col-sm-6">
+                    <h2>Level</h2>
+                    <div class="progress">
+                        <div class="active progress-bar progress-bar-striped" ng-class="progressBarClass(getLevel())" ng-style="{ width: getLevel() + '%' }"></div>
+                    </div>
+
+                    <h2>Consumption</h2>
+                    <canvas id="line" class="chart chart-line" chart-options="{ showScale: false, responsive: true, showToolTips: false, pointDot: false, animation: false }" chart-labels="axis" chart-series="['Consumption']" chart-data="feed.points"></canvas> 
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

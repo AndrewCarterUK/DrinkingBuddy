@@ -1,0 +1,108 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "This file is @generated automatically"
+    ],
+    "hash": "86b34a574fcddee4e9200046ef139f84",
+    "content-hash": "2e1691b27560b61788d0105eb0f39ada",
+    "packages": [
+        {
+            "name": "piphp/gpio",
+            "version": "v0.1.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/PiPHP/GPIO.git",
+                "reference": "030aa866e05ceaec8bd8adb84f0820c892f71a64"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/PiPHP/GPIO/zipball/030aa866e05ceaec8bd8adb84f0820c892f71a64",
+                "reference": "030aa866e05ceaec8bd8adb84f0820c892f71a64",
+                "shasum": ""
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "PiPHP\\GPIO\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Andrew Carter",
+                    "email": "andrewcarter1992@gmail.com"
+                }
+            ],
+            "description": "A library for accessing the GPIO pins on a Raspberry Pi",
+            "keywords": [
+                "GPIO",
+                "pi",
+                "pin",
+                "pins",
+                "raspberry"
+            ],
+            "time": "2015-12-13 21:09:21"
+        },
+        {
+            "name": "symfony/process",
+            "version": "v3.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/process.git",
+                "reference": "01383ed02a1020759bc8ee5d975fcec04ba16fbf"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/process/zipball/01383ed02a1020759bc8ee5d975fcec04ba16fbf",
+                "reference": "01383ed02a1020759bc8ee5d975fcec04ba16fbf",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.5.9"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Component\\Process\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony Process Component",
+            "homepage": "https://symfony.com",
+            "time": "2015-11-30 12:36:17"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": [],
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": [],
+    "platform-dev": []
+}
